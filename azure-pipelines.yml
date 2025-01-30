@@ -1,0 +1,19 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Docker@2
+  inputs:
+    containerRegistry: 'Acr-service-connection'
+    repository: 'myappimg'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+  
+- task: AzureWebAppContainer@1
+  inputs:
+    azureSubscription: 'Acr-service-connection'
+    appName: 'dccloudapp'
+    containers: 'poorvadcacr.azurecr.io/myappimg:latest'
