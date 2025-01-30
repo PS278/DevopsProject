@@ -1,19 +1,22 @@
 trigger:
-- main
+- main  # Change this if your default branch is not 'main'
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
 - task: Docker@2
+  displayName: 'Build and Push Docker Image to ACR'
   inputs:
-    containerRegistry: 'poorvadcacr'
-    repository: 'myappimg'
+    containerRegistry: 'Acr-service-connection'  # Your ACR service connection
+    repository: 'myappimg'  # Change 'myapp' to your actual image name
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
-  
+    tags: 'latest'
+
 - task: AzureWebAppContainer@1
+  displayName: 'Deploy to Azure App Service'
   inputs:
-    azureSubscription: 'acrserviceconnection'
-    appName: 'poorvaapp'
-    containers: 'poorvadcacr.azurecr.io/maappimg:latest'
+    azureSubscription: 'acrserviceconnection'  # Your AzureRM service connection
+    appName: 'poorvaapp'  # Change to your actual App Service name
+    containers: 'poorvadcacr.azurecr.io/myappimg:latest'  # Update with your ACR details
